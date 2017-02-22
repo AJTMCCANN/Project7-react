@@ -36,31 +36,40 @@ var TWEETS = [
 
 var FOLLOWED = [
   {
+    _id: 1,
     user_name: "Jill Spore",
-    user_id: "@jillspore"
+    user_id: "@jillspore",
+    avatar_img: "images/f-spore.png",
   },
   {
-    user_name: "Jill Spore",
-    user_id: "@jillspore"
+    _id: 2,
+    user_name: "Jimbob Magoo",
+    user_id: "@jillspore",
+    avatar_img: "images/f-spore.png",
   },
   {
+    _id: 3,
     user_name: "Jill Spore",
-    user_id: "@jillspore"
+    user_id: "@jillspore",
+    avatar_img: "images/m-spore.png",
   }
 ]
 
 var MESSAGES = [
   {
+    _id: 1,
     avatar_img: "images/f-spore.png",
     text: "How are things?",
     timestamp: 3 //+  hours ago
   },
   {
+    _id: 2,
     avatar_img: "images/f-spore.png",
     text: "How are things?",
     timestamp: 3 // hours ago
   },
   {
+    _id: 3,
     avatar_img: "images/f-spore.png",
     text: "How are things?",
     timestamp: 3 // hours ago
@@ -146,15 +155,11 @@ function AppHeader() {
 
 function Tweet(tweet_props) {
 
-  var divStyle = {
-    backgroundImage: 'url(' + tweet_props.avatar_img + ')'
-  }
-
   return(
     <li>
       <strong className="app--tweet--timestamp">{tweet_props.timestamp + "h"}</strong>
       <a className="app--tweet--author">
-        <div className="app--avatar" style={divStyle}>
+        <div className="app--avatar" style={{backgroundImage: `url(${tweet_props.avatar_img})`}}>
           <img src={tweet_props.avatar_img} />
         </div>
         <h4>{tweet_props.author_name}</h4> {tweet_props.author_id}
@@ -228,17 +233,18 @@ TweetList.propTypes = {
   tweets: React.PropTypes.array
 }
 
-function User() {
+function User(user_props) {
+
   return(
     <li>
       <div className="circle--fluid">
         <div className="circle--fluid--cell circle--fluid--primary">
           <a className="app--tweet--author">
-            <div className="app--avatar" style={{backgroundImage: 'url(images/f-spore.png)'}}>
+            <div className="app--avatar" style={{backgroundImage: `url(${user_props.avatar_img})`}}>
               <img src="images/f-spore.png" />
             </div>
-            <h4>Jill Spore</h4>
-            <p>@jillspore</p>
+            <h4>{user_props.user_name}</h4>
+            <p>{user_props.user_id}</p>
           </a>
         </div>
         <div className="circle--fluid--cell">
@@ -249,15 +255,25 @@ function User() {
   )
 }
 
-function UserList() {
+User.propTypes = {
+  _id: React.PropTypes.number,
+  user_name: React.PropTypes.string,
+  user_id: React.PropTypes.string,
+  avatar_img: React.PropTypes.string,
+}
+
+function UserList(userlist_props) {
   return(
     <ul className="app--user--list">
-      <User />
-      <User />
-      <User />
-      <User />
+    {userlist_props.followed.map( function(user) {
+      return <User key={user._id} user_name={user.user_name} user_id={user.user_id} avatar_img={user.avatar_img} />
+    })}
     </ul>
   )
+}
+
+UserList.propTypes = {
+  followed: React.PropTypes.array,
 }
 
 function Message() {
