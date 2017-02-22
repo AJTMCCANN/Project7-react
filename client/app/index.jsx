@@ -81,7 +81,9 @@ var MESSAGES = [
 
 var NUMBER_FOLLOWED = 42
 
-function PageHeader() {
+var THIS_ACCOUNT = '@memyselfandI'
+
+function PageHeader(pageheader_props) {
   return (
     <header className="circle--header">
       <div className="bounds">
@@ -95,7 +97,7 @@ function PageHeader() {
                 c4.7,14.6,18.3,25.3,34.5,25.6C42,124.1,26.1,130,8.8,130c-3,0-5.9-0.2-8.8-0.5C16.3,139.9,35.8,146,56.6,146
                 c67.9,0,105.1-56.2,105.1-104.9c0-1.6,0-3.2-0.1-4.8C168.8,31.2,175,24.7,180,17.3z"/>
               </svg>
-              <h1>@grattspore</h1>
+              <h1>{pageheader_props.this_account}</h1>
             </a>
           </div>
           <div className="circle--fluid--cell align-right">
@@ -111,27 +113,49 @@ function PageHeader() {
   )
 }
 
-function MakeTweet() {
-  return(
-    <div className="app--tweet">
-      <form>
-        <div className="circle--fluid">
-          <div className="circle--fluid--cell circle--fluid--primary align-bottom app--tweet--post">
-            <div className="app--avatar" style={{backgroundImage: 'url(images/m-spore.png)'}}>
-              <img src="images/m-spore.png" />
-            </div>
+var MakeTweet = React.createClass({
 
-            <textarea className="circle--textarea--input" placeholder="What's happening?" id="tweet-textarea"></textarea>
-            <strong className="app--tweet--char" id="tweet-char">140</strong>
+  propTypes: {
+  },
+
+  handleChange: function() {
+    this.setState({
+      remaining_chars: 140 - document.getElementById('tweet-textarea').value.length
+    })
+  },
+
+  getInitialState: function() {
+    return {
+      remaining_chars: 140
+    }
+  },
+
+  handleClick: function() {
+    console.log(document.getElementById('tweet-textarea').value)
+  },
+
+  render: function() {
+    return(
+      <div className="app--tweet">
+        <form>
+          <div className="circle--fluid">
+            <div className="circle--fluid--cell circle--fluid--primary align-bottom app--tweet--post">
+              <div className="app--avatar" style={{backgroundImage: 'url(images/m-spore.png)'}}>
+                <img src="images/m-spore.png" />
+              </div>
+
+              <textarea className="circle--textarea--input" maxLength="140" placeholder="What's happening?" id="tweet-textarea" onChange={this.handleChange}></textarea>
+              <strong className="app--tweet--char" id="tweet-char">{this.state.remaining_chars}</strong>
+            </div>
+            <div className="circle--fluid--cell align-bottom">
+              <button className="button-primary" id="send-tweet-btn" onClick={this.handleClick}>Tweet</button>
+            </div>
           </div>
-          <div className="circle--fluid--cell align-bottom">
-            <button className="button-primary">Tweet</button>
-          </div>
-        </div>
-      </form>
-    </div>
-  )
-}
+        </form>
+      </div>
+    )
+  }
+})
 
 function AppHeader(appheader_props) {
   return(
@@ -356,7 +380,7 @@ MainApp.propTypes = {
   return (
     <div id="wrapper">
 
-      <PageHeader />
+      <PageHeader this_account={app_props.this_account}/>
 
       <MakeTweet />
 
@@ -373,26 +397,7 @@ Application.propTypes = {
   followed: React.PropTypes.array,
   messages: React.PropTypes.array,
   number_followed: React.PropTypes.number,
+  this_account: React.PropTypes.string
 }
 
-// Application.propTypes = {
-//   title: React.PropTypes.string,
-//   players: React.PropTypes.arrayOf(React.PropTypes.shape({
-//     name: React.PropTypes.string.isRequired,
-//     score: React.PropTypes.number.isRequired,
-//     id: React.PropTypes.number.isRequired,
-//   })).isRequired,
-// }
-//
-// Application.defaultProps = {
-//   title: "Scoreboard",
-// }
-
-{/* <div className="players">
-  {app_props.players.map( function(player) {
-    return <Player name={player.name} score={player.score} key={player.id}/>
-  })}
-</div> */}
-
-
-ReactDOM.render(<Application tweets={TWEETS} followed={FOLLOWED} messages={MESSAGES} number_followed={NUMBER_FOLLOWED}/>, document.getElementById('app'))
+ReactDOM.render(<Application tweets={TWEETS} followed={FOLLOWED} messages={MESSAGES} number_followed={NUMBER_FOLLOWED} this_account={THIS_ACCOUNT}/>, document.getElementById('app'))
