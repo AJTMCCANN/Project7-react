@@ -59,23 +59,27 @@ var MESSAGES = [
   {
     _id: 1,
     avatar_img: "images/f-spore.png",
-    text: "How are things?",
-    timestamp: 3 //+  hours ago
+    text: "Wazzzup",
+    timestamp: 3,
+    origin: "app--message--me"
   },
   {
     _id: 2,
-    avatar_img: "images/f-spore.png",
+    avatar_img: "images/m-spore.png",
     text: "How are things?",
-    timestamp: 3 // hours ago
+    timestamp: 3,
+    origin: "app--message"
   },
   {
     _id: 3,
     avatar_img: "images/f-spore.png",
     text: "How are things?",
-    timestamp: 3 // hours ago
+    timestamp: 9,
+    origin: "app--message--me"
   }
 ]
 
+var NUMBER_FOLLOWED = 42
 
 function PageHeader() {
   return (
@@ -129,7 +133,7 @@ function MakeTweet() {
   )
 }
 
-function AppHeader() {
+function AppHeader(appheader_props) {
   return(
     <div className="app--section--header">
       <div className="grid-33">
@@ -140,7 +144,7 @@ function AppHeader() {
       </div>
       <div className="grid-33">
         <div className="app--section--heading">
-          <strong>129</strong>
+          <strong>{appheader_props.number_followed}</strong>
           <h2>Following</h2>
         </div>
       </div>
@@ -151,6 +155,10 @@ function AppHeader() {
       </div>
     </div>
   )
+}
+
+AppHeader.propTypes = {
+  number_followed: React.PropTypes.number
 }
 
 function Tweet(tweet_props) {
@@ -276,34 +284,44 @@ UserList.propTypes = {
   followed: React.PropTypes.array,
 }
 
-function Message() {
+function Message(message_props) {
   return(
-    <li className="app--message">
-      <div className="app--avatar" style={{backgroundImage: 'url(images/f-spore.png)'}}>
-        <img src="images/f-spore.png" />
+    <li className={message_props.origin}>
+      <div className="app--avatar" style={{backgroundImage: `url(${message_props.avatar_img})`}}>
+        <img src={message_props.avatar_img} />
       </div>
-      <p className="app--message--text">How are things?</p>
-      <p className="app--message--timestamp">3 hours ago</p>
+      <p className="app--message--text">{message_props.text}</p>
+      <p className="app--message--timestamp">{message_props.timestamp} hours ago</p>
     </li>
   )
 }
 
-function MessageList() {
+Message.propTypes = {
+  _id: React.PropTypes.number,
+  text: React.PropTypes.string,
+  timestamp: React.PropTypes.number,
+  avatar_img: React.PropTypes.string,
+  origin: React.PropTypes.string
+}
+
+function MessageList(messagelist_props) {
   return(
     <ul className="app--message--list">
       <li>
         <h3>Conversation with <a>Jill Spore</a></h3>
         <ul className="app--message--conversation">
-          <Message />
-          <Message />
-          <Message />
-          <Message />
-          <Message />
+          {messagelist_props.messages.map( function(message) {
+            return <Message key={message._id} text={message.text} timestamp={message.timestamp} avatar_img={message.avatar_img} origin={message.origin} />
+          })}
         </ul>
       </li>
 
     </ul>
   )
+}
+
+MessageList.propTypes = {
+  messages: React.PropTypes.array
 }
 
 function MainApp(main_app_props) {
@@ -342,7 +360,7 @@ MainApp.propTypes = {
 
       <MakeTweet />
 
-      <AppHeader />
+      <AppHeader number_followed={app_props.number_followed}/>
 
       <MainApp tweets={app_props.tweets} followed={app_props.followed} messages={app_props.messages}/>
 
@@ -353,7 +371,8 @@ MainApp.propTypes = {
 Application.propTypes = {
   tweets: React.PropTypes.array,
   followed: React.PropTypes.array,
-  messages: React.PropTypes.array
+  messages: React.PropTypes.array,
+  number_followed: React.PropTypes.number,
 }
 
 // Application.propTypes = {
@@ -376,4 +395,4 @@ Application.propTypes = {
 </div> */}
 
 
-ReactDOM.render(<Application tweets={TWEETS} followed={FOLLOWED} messages={MESSAGES}/>, document.getElementById('app'))
+ReactDOM.render(<Application tweets={TWEETS} followed={FOLLOWED} messages={MESSAGES} number_followed={NUMBER_FOLLOWED}/>, document.getElementById('app'))
